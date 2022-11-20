@@ -18,6 +18,10 @@ import pdb
 
 PRINT = True
 
+#### IMPORTS PARA RANDOMIZAR PESOS ####
+from random import seed
+from random import random
+#### IMPORTS PARA RANDOMIZAR PESOS ####
 class PerceptronClassifier:
     """
     Perceptron classifier.
@@ -54,9 +58,9 @@ class PerceptronClassifier:
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
         for iteration in range(self.max_iterations):
-            print "Starting iteration ", iteration, "..."
+            print ("Starting iteration ", iteration, "...")
             for i in range(len(trainingData)):#training data
-                pdb.set_trace()#esto es un break point para que puedas comprobar el formato de los datos
+                #pdb.set_trace()#esto es un break point para que puedas comprobar el formato de los datos
                 ########################################################################################
                 # 1. i es el indice de un ejemplo (un item, f(x) de un ejemplo) del conjunto de entrenamiento.
                 # 2. Asi pues, en cada vuelta de este loop se trata un solo ejemplo
@@ -67,6 +71,34 @@ class PerceptronClassifier:
                 #          Recordad tambien que es una clasificacion multiclase en este caso. Hay tantas clases como nos marca el atributo self.legalLabels
                 #########################################################################################
                 "*** YOUR CODE HERE ***"
+                ## Inicializar los pesos random (EN TEORIA NO HACE FALTA)
+                seed(1)
+                for w_ind in self.weights:
+                    self.weights[w_ind] = [random() for i in range(len(trainingData))]
+
+                ## Crear estructura de datos para guardar 'score' para cada clase
+                scores = {}
+                for label in self.legalLabels:
+                    scores[label] = 0
+
+                ## Calcular el score que corresponde a cada clase (dotProduct)
+                instancia_actual = trainingData[i]
+                for w_ind in range(len(self.weights)):
+                    w_actual = self.weights[w_ind] # array con pesos de una clase concreta (0 - 9) [LOS PESOS SIGUEN VACIOS]
+                    score_actual = 0
+                    for pixel_coord, w in zip(instancia_actual, w_actual):
+                        score_actual += instancia_actual[pixel_coord] * w
+                    scores[w_ind] = score_actual
+
+                ## Actualizacion de pesos (en caso de ser necesario)
+                clase_max_score = max(scores, key = scores.get) # clase cuyo 'score' es el maximo (0 - 9)
+                clase_correcta = trainingLabels[i]
+                if clase_max_score != clase_correcta:
+                    self.weights[clase_max_score] = [instancia_actual[pixel_coord] - w for pixel_coord, w in zip(instancia_actual, self.weights[clase_max_score])]
+                    self.weights[clase_correcta] = [instancia_actual[pixel_coord] + w for pixel_coord, w in zip(instancia_actual, self.weights[clase_correcta])]
+
+                #pdb.set_trace() # DEBUGGER
+
 
 
     def classify(self, data ):
@@ -80,6 +112,7 @@ class PerceptronClassifier:
         for datum in data:
             vectors = util.Counter()
             for l in self.legalLabels:
+                pdb.set_trace() # DEBUGGER
                 vectors[l] = self.weights[l] * datum
             guesses.append(vectors.argMax())
         return guesses
