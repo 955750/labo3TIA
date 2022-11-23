@@ -71,33 +71,24 @@ class PerceptronClassifier:
                 #          Recordad tambien que es una clasificacion multiclase en este caso. Hay tantas clases como nos marca el atributo self.legalLabels
                 #########################################################################################
                 "*** YOUR CODE HERE ***"
-                ## Inicializar los pesos random (EN TEORIA NO HACE FALTA)
-                seed(1)
-                for w_ind in self.weights:
-                    self.weights[w_ind] = [random() for i in range(len(trainingData))]
+            
+                # Crear estructura de datos para guardar 'score' para cada clase
+                scores = util.Counter()
 
-                ## Crear estructura de datos para guardar 'score' para cada clase
-                scores = {}
-                for label in self.legalLabels:
-                    scores[label] = 0
-
-                ## Calcular el score que corresponde a cada clase (dotProduct)
+                # Calcular clase cuyo score (dotProduct) sea el mas alto
                 instancia_actual = trainingData[i]
-                for w_ind in range(len(self.weights)):
-                    w_actual = self.weights[w_ind] # array con pesos de una clase concreta (0 - 9) [LOS PESOS SIGUEN VACIOS]
-                    score_actual = 0
-                    for pixel_coord, w in zip(instancia_actual, w_actual):
-                        score_actual += instancia_actual[pixel_coord] * w
-                    scores[w_ind] = score_actual
+                for label in self.legalLabels:
+                    scores[label] = self.weights[label] * instancia_actual
 
-                ## Actualizacion de pesos (en caso de ser necesario)
-                clase_max_score = max(scores, key = scores.get) # clase cuyo 'score' es el maximo (0 - 9)
+                clase_argmax = scores.argMax()
+
+                # Actualizacion de pesos (en caso de ser necesario)
                 clase_correcta = trainingLabels[i]
-                if clase_max_score != clase_correcta:
-                    self.weights[clase_max_score] = [instancia_actual[pixel_coord] - w for pixel_coord, w in zip(instancia_actual, self.weights[clase_max_score])]
-                    self.weights[clase_correcta] = [instancia_actual[pixel_coord] + w for pixel_coord, w in zip(instancia_actual, self.weights[clase_correcta])]
-
+                if clase_argmax != clase_correcta:
+                    self.weights[clase_argmax] = self.weights[clase_argmax] - trainingData[i]
+                    self.weights[clase_correcta] = self.weights[clase_correcta] + trainingData[i]
                 #pdb.set_trace() # DEBUGGER
+                
 
 
 
@@ -112,7 +103,6 @@ class PerceptronClassifier:
         for datum in data:
             vectors = util.Counter()
             for l in self.legalLabels:
-                pdb.set_trace() # DEBUGGER
                 vectors[l] = self.weights[l] * datum
             guesses.append(vectors.argMax())
         return guesses
