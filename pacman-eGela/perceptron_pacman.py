@@ -16,6 +16,7 @@
 import util
 from perceptron import PerceptronClassifier
 from pacman import GameState
+import pdb
 
 PRINT = True
 
@@ -50,4 +51,20 @@ class PerceptronClassifierPacman(PerceptronClassifier):
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                #pdb.set_trace() # DEBUGGER
+
+                # Crear estructura de datos para guardar 'score' para cada clase
+                scores = util.Counter()
+
+                # Calcular clase cuyo score (dotProduct) sea el mas alto
+                instancia_actual = trainingData[i] # (estados, accionesLegales)
+                for accion_legal in instancia_actual[1]:
+                    scores[accion_legal] = self.weights * instancia_actual[0][accion_legal]
+
+                clase_argmax = scores.argMax()
+
+                # Actualizacion de pesos (en caso de ser necesario)
+                clase_correcta = trainingLabels[i]
+                if clase_argmax != clase_correcta:
+                    self.weights += instancia_actual[0][clase_correcta] - instancia_actual[0][clase_argmax]
+                #util.raiseNotDefined()
