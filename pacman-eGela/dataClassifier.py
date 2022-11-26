@@ -147,6 +147,26 @@ def enhancedPacmanFeatures(state, action):
 
     features["closest ghost"] = minD#1/pow(minD,2)
 
+
+    #### ANADIDO POR NOSOTROS ####
+    # remaining_capsules = len(state.getCapsules())
+    # features["remaining capsules"] = remaining_capsules
+
+    # remaining_foods = state.getNumFood()
+    # features["remaining foods"] = remaining_foods
+    # score = state.getScore()
+    # features["score"] = score
+
+    # newGhostStates = state.getGhostStates()
+    # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+    # tiempo_medio_scared = 0
+    # for scared_time in newScaredTimes:
+    #     tiempo_medio_scared += scared_time
+    # tiempo_medio_scared /= len(newScaredTimes)
+
+    # features["scared time"] = tiempo_medio_scared
+
+
     return features
 
 
